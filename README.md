@@ -6,7 +6,7 @@ A simple tool leveraging the Raspberry Pi `libcamera` camera stack to record tim
 
 1. a `cron` entry runs the script every 5 minutes, checking if the criteria for timelapse taking is met
 
-    `*/5 * * * * cd /home/pi/timelapse && ./main.py >> /dev/null`
+    `crontab -l > file; cat crontab.cron >> file; crontab file; rm file`
 
 2. the script takes the pictures needed and saves them in a specific folder format:
 

@@ -1,0 +1,2 @@
+*/5 * * * * cd /home/pi/timelapse && ./main.py >> /dev/null
+0 1 * * * cd /home/pi/timelapse && ./fetch.py >> /dev/null

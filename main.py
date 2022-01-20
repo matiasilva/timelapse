@@ -8,12 +8,9 @@ import datetime as dt
 import os
 import subprocess
 import yaml
-import requests
-
-API_ENDPOINT = "https://api.sunrise-sunset.org/json?lat={}&lng={}&formatted=0"
-config = {}
 
 IMAGE_STRING = "-o image-{}"
+config = {}
 
 
 def main():
@@ -24,21 +21,24 @@ def main():
         except yaml.YAMLError as exc:
             print(exc)
 
-    # fetch data from API
-    # TODO: optimize so we don't check every day
-    coords = (config.get("latitude"), config.get("longitude"))
-    times = get_times(API_ENDPOINT, coords)
-    if times is None:
+    # fetch data from API or local cache
+    with open("db.yaml", "r") as f:
+        try:
+            db = yaml.safe_load(f)
+        except yaml.YAMLError as exc:
+            print(exc)
+    sunrise = format_dt(db.get("sunrise"))
+    sunset = format_dt(db.get("sunset"))
+    if sunrise is None or sunset is None:
         sunrise = time_to_dt(config.get("sunrise"))
         sunset = time_to_dt(config.get("sunset"))
-        times = (sunrise, sunset)
 
     # time check
     padding = dt.timedelta(hours=1, minutes=30)
     TIMELAPSE_INTERVAL = config.get("timelapse_interval", 3)
     count = round((padding * 2).total_seconds() / TIMELAPSE_INTERVAL)
-    is_sunrise = has_triggered(times[0], padding)
-    is_sunset = has_triggered(times[1], padding)
+    is_sunrise = has_triggered(sunrise, padding)
+    is_sunset = has_triggered(sunset, padding)
     if is_sunrise:
         start_timelapse("sunrise", count)
     elif is_sunset:
@@ -50,20 +50,6 @@ def time_to_dt(t_raw):
     now = dt.datetime.now()
     t = dt.time.fromisoformat(t_raw)
     return now.replace(hour=t.hour, minute=t.minute)
-
-
-def get_times(url, coords):
-    (lat, long) = coords
-    endpoint = url.format(lat, long)
-    data = requests.get(endpoint)
-    is_valid = data.status_code == requests.codes.ok
-    data_json = data.json()
-    if data_json.get("status") == "OK" and is_valid:
-        results = data_json.get("results")
-        sunrise = format_dt(results.get("sunrise"))
-        sunset = format_dt(results.get("sunset"))
-        return (sunrise, sunset)
-    return None
 
 
 def format_dt(raw_t):
