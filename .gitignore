@@ -1,1 +1,5 @@
+# python virtual environments
 .venv
+
+# script-generated cache
+db.yaml
