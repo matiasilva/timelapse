@@ -83,13 +83,13 @@ def start_timelapse(type, count):
     for i in range(count):
         # take photo
         subprocess.run(
-            ['libcamera-jpeg', IMAGE_STRING.format(i), '-n', '-q 100'])
+            ['libcamera-jpeg', IMAGE_STRING.format(i), '-n', '-q 100', '--width 1920', '--height 1080'])
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
 
     # when done, stitch the photos together
     subprocess.run(['ffmpeg', '-framerate 30', '-pattern_type glob',
-                   '-i "{file_path}/*.JPG"', '-s:v 1440x1080', '-c:v libx264', '-crf 17', '-pix_fmt yuv420p', f'output.mp4'])
+                   '-i "{file_path}/*.JPG"', '-c:v libx264', '-crf 17', '-pix_fmt yuv420p', f'output.mp4'])
 
 
 if __name__ == "__main__":
