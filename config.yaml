@@ -1,0 +1,13 @@
+# fallback times
+sunrise: "07:50"
+sunset: "16:25"
+
+# output configuration
+output_dir: "output"
+
+# timing
+timelapse_interval: 3
+
+# sunrise-sunset API query
+latitude: 52.2034823
+longitude: 0.1235817
