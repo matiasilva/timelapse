@@ -10,11 +10,13 @@ import subprocess
 import yaml
 from pathlib import Path
 import sys
+import signal
 
 config = {}
 
-
 def main():
+    signal.signal(signal.SIGINT, exit_gracefully)
+
     # check LOCK file
     if Path("lock").is_file():
         sys.exit(0)
@@ -56,6 +58,10 @@ def main():
     elif is_sunset:
         start_timelapse("sunset", count)
     return
+
+
+def exit_gracefully():
+    os.remove("lock")
 
 
 def time_to_dt(t_raw):
