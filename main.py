@@ -90,7 +90,9 @@ def start_timelapse(type, count):
     for i in range(count):
         # take photo
         args = ['libcamera-jpeg', '-n', '-q', '100', '--width', '1920', '--height', '1080', '-t', '1', '-o', f'{file_path}/image-{i}.jpg']
-        subprocess.run(args)
+        subprocess.run(args, stdout=subprocess.DEVNULL)
+        if i % 10 == 0:
+            print(f'{round(100*i/count)}% -- {i}/{count}')
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
 
