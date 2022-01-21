@@ -8,6 +8,7 @@ import datetime as dt
 import os
 import subprocess
 import yaml
+from pathlib import Path
 
 IMAGE_STRING = "-o image-{}"
 config = {}
@@ -15,25 +16,28 @@ config = {}
 
 def main():
     # read config
-    with open("config.yaml", "r") as f:
-        try:
-            config = yaml.safe_load(f)
-        except yaml.YAMLError as exc:
-            print(exc)
-
-    # fetch data from API or local cache
+    CONFIG_PATH = Path('config.yaml')
     try:
-        with open("db.yaml", "r") as f:
+        with open(CONFIG_PATH, "r") as f:
             try:
-                db = yaml.safe_load(f)
+                config = yaml.safe_load(f)
             except yaml.YAMLError as exc:
                 print(exc)
     except FileNotFoundError as e:
-        db = {}
+        print(e)
 
-    sunrise = format_dt(db.get("sunrise"))
-    sunset = format_dt(db.get("sunset"))
-    if sunrise is None or sunset is None:
+    # use local cache OR fallback values
+    DB_PATH = Path('db.yaml')
+    try:
+        with open(DB_PATH, "r") as f:
+            try:
+                db = yaml.safe_load(f)
+                sunrise = format_dt(db.get("sunrise"))
+                sunset = format_dt(db.get("sunset"))
+            except yaml.YAMLError as exc:
+                print(exc)
+    except FileNotFoundError as e:
+        # use config
         sunrise = time_to_dt(config.get("sunrise"))
         sunset = time_to_dt(config.get("sunset"))
 
