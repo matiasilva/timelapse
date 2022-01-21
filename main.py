@@ -89,7 +89,7 @@ def start_timelapse(type, count):
 
     for i in range(count):
         # take photo
-        subprocess.run(f'libcamera-jpeg -n -q 100 --width 1920 --height 1080 -t 1 -o image-{i}')
+        subprocess.run(f'libcamera-jpeg -n -q 100 --width 1920 --height 1080 -t 1 -o {file_path}/image-{i}.jpg')
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
 
