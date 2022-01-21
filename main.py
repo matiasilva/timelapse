@@ -10,7 +10,6 @@ import subprocess
 import yaml
 from pathlib import Path
 
-IMAGE_STRING = "-o image-{}"
 config = {}
 
 
@@ -90,8 +89,7 @@ def start_timelapse(type, count):
 
     for i in range(count):
         # take photo
-        subprocess.run(
-            ['libcamera-jpeg', IMAGE_STRING.format(i), '-n', '-q 100', '-width 1920', '-height 1080', '-t 1'])
+        subprocess.run(f'libcamera-jpeg -n -q 100 --width 1920 --height 1080 -t 1 -o image-{i}')
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
 
