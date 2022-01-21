@@ -9,11 +9,16 @@ import os
 import subprocess
 import yaml
 from pathlib import Path
+import sys
 
 config = {}
 
 
 def main():
+    # check LOCK file
+    if Path("lock").is_file():
+        sys.exit(0)
+
     # read config
     CONFIG_PATH = Path('config.yaml')
     try:
@@ -82,6 +87,9 @@ def start_timelapse(type, count):
     TIMELAPSE_INTERVAL = config.get("timelapse_interval", 3)
     OUTPUT_FOLDER = config.get("output_folder", "output")
 
+    # create LOCK file
+    open("lock", 'a').close()
+
     # create folder structure
     now = dt.datetime.now()
     file_path = f"{OUTPUT_FOLDER}/{now.year}/{now.month}/{now.day}/{type}"
@@ -95,6 +103,9 @@ def start_timelapse(type, count):
             print(f'{round(100*i/count)}% -- {i}/{count}')
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
+
+    # remove LOCK file
+    os.remove("lock")
 
     # when done, stitch the photos together
     # subprocess.run(['ffmpeg', '-framerate 30', '-pattern_type glob',
