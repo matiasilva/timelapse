@@ -22,11 +22,15 @@ def main():
             print(exc)
 
     # fetch data from API or local cache
-    with open("db.yaml", "r") as f:
-        try:
-            db = yaml.safe_load(f)
-        except yaml.YAMLError as exc:
-            print(exc)
+    try:
+        with open("db.yaml", "r") as f:
+            try:
+                db = yaml.safe_load(f)
+            except yaml.YAMLError as exc:
+                print(exc)
+    except FileNotFoundError as e:
+        db = {}
+
     sunrise = format_dt(db.get("sunrise"))
     sunset = format_dt(db.get("sunset"))
     if sunrise is None or sunset is None:
