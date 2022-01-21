@@ -84,12 +84,13 @@ def start_timelapse(type, count):
 
     # create folder structure
     now = dt.datetime.now()
-    file_path = f"{OUTPUT_FOLDER}/{now.year}/{now.month}/{now.day}/f{type}"
+    file_path = f"{OUTPUT_FOLDER}/{now.year}/{now.month}/{now.day}/{type}"
     os.makedirs(file_path, exist_ok=True)
 
     for i in range(count):
         # take photo
-        subprocess.run(f'libcamera-jpeg -n -q 100 --width 1920 --height 1080 -t 1 -o {file_path}/image-{i}.jpg')
+        out = subprocess.run(f'libcamera-jpeg -n -q 100 --width 1920 --height 1080 -t 1 -o {file_path}/image-{i}.jpg')
+        print(out.stdout)
         # rest for a bit
         time.sleep(TIMELAPSE_INTERVAL)
 
