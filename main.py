@@ -60,8 +60,11 @@ def main():
     return
 
 
-def exit_gracefully():
-    os.remove("lock")
+def exit_gracefully(signum, frame):
+    # delete lock if exists
+    if Path("lock").is_file():
+        os.remove("lock")
+    sys.exit()
 
 
 def time_to_dt(t_raw):
